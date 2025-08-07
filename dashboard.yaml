@@ -1,0 +1,518 @@
+esphome: 
+  name: ha-dashboard 
+  friendly_name: HA Dashboard
+  on_boot:
+    priority: -10.0 # Run after the network and API have connected
+    then:
+      - script.execute: show_splash_screen
+
+esp32: 
+  board: esp32-c3-devkitm-1 
+  framework: 
+    type: esp-idf 
+
+# Logging & OTA 
+logger: 
+
+api: 
+  encryption: 
+    key: "[Key generated when setting up the app]" 
+
+ota: 
+  - platform: esphome 
+    password: "[Password generated when setting it up]" 
+
+wifi: 
+  ssid: !secret wifi_ssid  #THIS IS SAVED ON ESP32 Portal
+  password: !secret wifi_password 
+  ap: 
+    ssid: "HA-Dashboard Fallback" 
+    password: "fallbackpassword" 
+
+captive_portal: 
+
+# Fonts 
+font: 
+  - file: "gfonts://Inter@700" 
+    id: myFont 
+    size: 24 
+
+  - file: "gfonts://Inter@700" 
+    id: myFonts 
+    size: 20 
+
+  - file: 'fonts/materialdesignicons-webfont.ttf' 
+    id: font_mdi_medium 
+    size: 40 
+    glyphs: &mdi-glyphs 
+      - "\U000F050F"  # thermometer 
+      - "\U000F048D"  # server-network 
+      - "\U000F05E0"  # check-circle 
+      - "\U000F0159"  # close-circle 
+      - "\U000F02DC"  # home 
+      - "\U000F035B"  # memory
+      - "\U000F02CA"  # disk
+      - "\U000F061A"  # cpu
+      - "\U000F0906"  # running
+
+# Images 
+image: 
+  - file: /config/esphome/image/proxmox.jpg
+    id: myImage 
+    type: BINARY 
+    resize: 800x480
+    invert_alpha: true
+
+# SPI config for display 
+spi: 
+  clk_pin: GPIO8 
+  mosi_pin: GPIO10 
+
+# Sensors from Home Assistant 
+sensor: 
+  - platform: homeassistant 
+    id: temp_downstairs 
+    entity_id: sensor.downstairs_current_temperature 
+    internal: true 
+  - platform: homeassistant 
+    id: temp_upstairs 
+    entity_id: sensor.upstairs_current_temperature 
+    internal: true 
+  - platform: homeassistant 
+    id: temp_atic 
+    entity_id: sensor.atic_temperature 
+    internal: true 
+  - platform: homeassistant 
+    id: temp_garage 
+    entity_id: sensor.garage_temperature 
+    internal: true 
+  - platform: homeassistant 
+    id: temp_comms 
+    entity_id: sensor.racksensor_temperature 
+    internal: true 
+  - platform: homeassistant 
+    entity_id: weather.forecast_home 
+    attribute: "temperature" 
+    id: outside_temperature 
+    internal: true 
+  - platform: homeassistant 
+    entity_id: weather.forecast_home 
+    id: wind_speed 
+    attribute: "wind_speed" 
+    unit_of_measurement: "km/h" 
+    internal: true 
+  - platform: homeassistant 
+    id: homepage_cpu 
+    entity_id: sensor.lxc_homepage_101_cpu_used
+    internal: true
+  - platform: homeassistant 
+    id: homepage_ram 
+    entity_id: sensor.lxc_homepage_101_memory_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: homepage_disk 
+    entity_id: sensor.lxc_homepage_101_disk_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: qbt_cpu 
+    entity_id: sensor.lxc_qbt_102_cpu_used
+    internal: true
+  - platform: homeassistant 
+    id: qbt_ram 
+    entity_id: sensor.lxc_qbt_102_memory_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: qbt_disk 
+    entity_id: sensor.lxc_qbt_102_disk_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: ansible_cpu 
+    entity_id: sensor.lxc_ansible_cn_104_cpu_used 
+    internal: true
+  - platform: homeassistant 
+    id: ansible_ram 
+    entity_id: sensor.lxc_ansible_cn_104_memory_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: ansible_disk 
+    entity_id: sensor.lxc_ansible_cn_104_disk_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: plex_cpu 
+    entity_id: sensor.lxc_plex_103_cpu_used 
+    internal: true
+  - platform: homeassistant 
+    id: plex_ram 
+    entity_id: sensor.lxc_plex_103_memory_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: plex_disk 
+    entity_id: sensor.lxc_plex_103_disk_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: pihole_cpu 
+    entity_id: sensor.lxc_pihole_105_cpu_used 
+    internal: true
+  - platform: homeassistant 
+    id: pihole_ram 
+    entity_id: sensor.lxc_pihole_105_memory_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: pihole_disk 
+    entity_id: sensor.lxc_pihole_105_disk_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: nordvpn_cpu 
+    entity_id: sensor.lxc_nordvpn_106_cpu_used 
+    internal: true
+  - platform: homeassistant 
+    id: nordvpn_ram 
+    entity_id: sensor.lxc_nordvpn_106_memory_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: nordvpn_disk 
+    entity_id: sensor.lxc_nordvpn_106_disk_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: vscodeserver_cpu 
+    entity_id: sensor.lxc_vscodeserver_107_cpu_used 
+    internal: true
+  - platform: homeassistant 
+    id: vscodeserver_ram 
+    entity_id: sensor.lxc_vscodeserver_107_memory_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: vscodeserver_disk 
+    entity_id: sensor.lxc_vscodeserver_107_disk_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: portainer_cpu 
+    entity_id: sensor.lxc_portainer_108_cpu_used 
+    internal: true
+  - platform: homeassistant 
+    id: portainer_ram 
+    entity_id: sensor.lxc_portainer_108_memory_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: portainer_disk 
+    entity_id: sensor.lxc_portainer_108_disk_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: n8n_cpu 
+    entity_id: sensor.lxc_n8n_110_cpu_used 
+    internal: true
+  - platform: homeassistant 
+    id: n8n_ram 
+    entity_id: sensor.lxc_n8n_110_memory_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: n8n_disk 
+    entity_id: sensor.lxc_n8n_110_disk_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: win_cpu 
+    entity_id: sensor.qemu_vm_win_jumpserver_112_cpu_used
+    internal: true
+  - platform: homeassistant 
+    id: win_ram 
+    entity_id: sensor.qemu_vm_win_jumpserver_112_memory_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: win_disk 
+    entity_id: sensor.qemu_vm_win_jumpserver_112_disk_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: zfs_disk_perc
+    entity_id: sensor.zfs_prox_prod_1_zfs_pool_ssdraid_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: local_disk_perc
+    entity_id: sensor.storage_prox_prod_1_local_disk_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: local_lvm_disk_perc
+    entity_id: sensor.storage_prox_prod_1_local_lvm_disk_used_percentage
+    internal: true
+  - platform: homeassistant 
+    id: zfs_disk_used
+    entity_id: sensor.zfs_prox_prod_1_zfs_pool_ssdraid_used
+    internal: true
+  - platform: homeassistant 
+    id: local_disk_used
+    entity_id: sensor.storage_prox_prod_1_local_disk_used
+    internal: true
+  - platform: homeassistant 
+    id: local_lvm_disk_used
+    entity_id: sensor.storage_prox_prod_1_local_lvm_disk_used
+    internal: true
+  - platform: homeassistant 
+    id: zfs_disk_total
+    entity_id: sensor.zfs_prox_prod_1_zfs_pool_ssdraid_total
+    internal: true
+  - platform: homeassistant 
+    id: local_disk_total
+    entity_id: sensor.storage_prox_prod_1_local_disk_total
+    internal: true
+  - platform: homeassistant 
+    id: local_lvm_disk_total
+    entity_id: sensor.storage_prox_prod_1_local_lvm_disk_total
+    internal: true
+
+text_sensor: 
+  - platform: homeassistant 
+    entity_id: weather.forecast_home 
+    id: weather_condition 
+    internal: true 
+  - platform: homeassistant 
+    entity_id: sensor.time 
+    id: current_time 
+    internal: true 
+  - platform: homeassistant 
+    id: uptime_rpi 
+    entity_id: sensor.uptimekuma_home_assistant 
+    internal: true 
+  - platform: homeassistant 
+    id: uptime_web 
+    entity_id: sensor.uptimekuma_home_assistant_web_interface 
+    internal: true 
+  - platform: homeassistant 
+    id: uptime_proxmox 
+    entity_id: sensor.uptimekuma_proxmox_web_interface 
+    internal: true 
+  - platform: homeassistant 
+    id: uptime_qbittorrent 
+    entity_id: sensor.uptimekuma_qbittorrent_web_interface 
+    internal: true 
+  - platform: homeassistant 
+    id: uptime_qnap 
+    entity_id: sensor.uptimekuma_qnap_web_interface 
+    internal: true 
+  - platform: homeassistant 
+    id: uptime_semaphore 
+    entity_id: sensor.uptimekuma_semaphore_web_interface 
+    internal: true 
+  - platform: homeassistant 
+    id: uptime_pihole 
+    entity_id: sensor.uptimekuma_pihole_web_interface 
+    internal: true 
+  - platform: homeassistant 
+    id: uptime_portainer 
+    entity_id: sensor.uptimekuma_portainer_web_interface 
+    internal: true 
+  - platform: homeassistant 
+    id: uptime_plex 
+    entity_id: sensor.uptimekuma_plex_web_interface 
+    internal: true 
+  - platform: homeassistant 
+    id: uptime_n8n
+    entity_id: sensor.uptimekuma_n8n_web_interface 
+    internal: true 
+  - platform: homeassistant 
+    id: homepage_status 
+    entity_id: binary_sensor.lxc_homepage_101_status
+    internal: true
+  - platform: homeassistant 
+    id: qbt_status 
+    entity_id: binary_sensor.lxc_qbt_102_status
+    internal: true
+  - platform: homeassistant 
+    id: plex_status 
+    entity_id: binary_sensor.lxc_plex_103_status
+    internal: true
+  - platform: homeassistant 
+    id: ansible_status 
+    entity_id: binary_sensor.lxc_ansible_cn_104_status
+    internal: true
+  - platform: homeassistant 
+    id: pihole_status 
+    entity_id: binary_sensor.lxc_pihole_105_status
+    internal: true
+  - platform: homeassistant 
+    id: nordvpn_status 
+    entity_id: binary_sensor.lxc_nordvpn_106_status
+    internal: true
+  - platform: homeassistant 
+    id: vscodeserver_status 
+    entity_id: binary_sensor.lxc_vscodeserver_107_status
+    internal: true
+  - platform: homeassistant 
+    id: portainer_status 
+    entity_id: binary_sensor.lxc_portainer_108_status
+    internal: true
+  - platform: homeassistant 
+    id: n8n_status 
+    entity_id: binary_sensor.lxc_n8n_110_status
+    internal: true
+  - platform: homeassistant 
+    id: win_status 
+    entity_id: binary_sensor.qemu_vm_win_jumpserver_112_status
+    internal: true
+
+
+# A global variable to track which page is active 
+globals: 
+  - id: current_display_page 
+    type: int 
+    initial_value: '0' 
+
+# Script to control the startup splash screen sequence
+script:
+  - id: show_splash_screen
+    mode: single 
+    then:
+      # 1. Switch to the image page
+      - lambda: 'id(current_display_page) = 1;'
+      # 2. Force the display to update and show the image
+      - lambda: 'id(my_epaper_display).update();'
+      # 3. Wait for 10 seconds
+      - delay: 10s
+      # 4. Switch back to the main dashboard page
+      - lambda: 'id(current_display_page) = 0;'
+      # 5. Force the display to update again to show the dashboard
+      - lambda: 'id(my_epaper_display).update();'
+
+# Display 
+display: 
+  - platform: waveshare_epaper 
+    id: my_epaper_display
+    cs_pin: GPIO3 
+    dc_pin: GPIO5 
+    busy_pin: 
+      number: GPIO4 
+      inverted: true 
+    reset_pin: GPIO2 
+    model: 7.50inv2 
+    update_interval: 30s 
+    lambda: |- 
+      if (id(current_display_page) == 1) {
+        // === Main Proxmox Resource Table ===
+        it.rectangle(20, 20, 545, 440); // Main container for the 3/4 width table
+        it.image(20, 20, id(myImage));
+        it.printf(90, 30, id(myFont), "PROXMOX RESOURCES");
+
+        // --- Column Headers ---
+        // You can replace these text headers with your chosen MDI icons later.
+        int header_y = 60;
+        it.printf(260, header_y, id(font_mdi_medium), "\U000F061A");
+        it.printf(335, header_y, id(font_mdi_medium), "\U000F035B");
+        it.printf(420, header_y, id(font_mdi_medium), "\U000F02CA");
+        it.printf(495, header_y, id(font_mdi_medium), "\U000F0906");
+
+        // --- Helper lambda to draw each resource row ---
+        // This function handles drawing the name, stats, and status indicator for a single host.
+        auto draw_resource_row = [&](int y, std::string name, std::string is_running, float cpu_usage, float mem_usage, float disk_usage) {
+            // Hostname
+            it.printf(40, y, id(myFonts), "%s", name.c_str());
+            // CPU %
+            it.printf(250, y, id(myFonts), "%.1f%%", cpu_usage);
+            // Memory %
+            it.printf(330, y, id(myFonts), "%.1f%%", mem_usage);
+            // Disk %
+            it.printf(410, y, id(myFonts), "%.1f%%", disk_usage);
+            // Status text
+            //const char* status_text = is_running ? "RUN" : "STOP";
+            it.printf(500, y,  id(myFonts), "%s", is_running.c_str());
+        };
+
+        // --- Define Row Positions & Draw Each Service ---
+        int base_y = 100;
+        int row_h = 32; // Vertical spacing between rows
+
+        // Replace the placeholder values (true, 15.5, etc.) with your actual sensor IDs.
+        // Example: id(homepage_cpu).state, id(homepage_mem).state, etc.
+        draw_resource_row(base_y + 0 * row_h, "Homepage",       id(homepage_status).state, id(homepage_cpu).state,  id(homepage_ram).state,  id(homepage_disk).state);
+        draw_resource_row(base_y + 1 * row_h, "QBT",            id(qbt_status).state, id(qbt_cpu).state,  id(qbt_ram).state,  id(qbt_disk).state);
+        draw_resource_row(base_y + 2 * row_h, "PLEX",           id(plex_status).state, id(plex_cpu).state,  id(plex_ram).state,  id(plex_disk).state);
+        draw_resource_row(base_y + 3 * row_h, "Ansible",        id(ansible_status).state, id(ansible_cpu).state,  id(ansible_ram).state,  id(ansible_disk).state);
+        draw_resource_row(base_y + 4 * row_h, "PiHole",         id(pihole_status).state, id(pihole_cpu).state,  id(pihole_ram).state,  id(pihole_disk).state);
+        draw_resource_row(base_y + 5 * row_h, "NordVPN",        id(nordvpn_status).state, id(nordvpn_cpu).state,  id(nordvpn_ram).state,  id(nordvpn_disk).state);
+        draw_resource_row(base_y + 6 * row_h, "VSCode Server",  id(vscodeserver_status).state, id(vscodeserver_cpu).state,  id(vscodeserver_ram).state,  id(vscodeserver_disk).state);
+        draw_resource_row(base_y + 7 * row_h, "Portainer",      id(portainer_status).state, id(portainer_cpu).state,  id(portainer_ram).state,  id(portainer_disk).state);
+        draw_resource_row(base_y + 8 * row_h, "n8n",            id(n8n_status).state, id(n8n_cpu).state,  id(n8n_ram).state,  id(n8n_disk).state);
+        draw_resource_row(base_y + 9 * row_h, "Win Jumpserver", id(win_status).state, id(win_cpu).state,  id(win_ram).state,  id(win_disk).state);
+
+
+        // === Storage Info Box  ===
+        it.rectangle(585, 20, 195, 440); // The 1/4 width box on the right
+        //it.printf(605, 30, id(font_mdi_medium), "\U000F02DC"); // Example MDI Icon for Storage
+        it.printf(625, 30, id(myFont), "STORAGE");
+        it.rectangle(590, 100, 185, 110); // ZFS
+        it.rectangle(590, 100, 185, 25); //header box for ZFS
+        it.printf(595, 101, id(myFonts), "ZFS");
+        it.printf(595, 130, id(myFonts), "- Used: ");  
+        it.printf(680, 130, id(myFonts), "%.1fGB", id(zfs_disk_used).state); 
+        it.printf(595, 155, id(myFonts), "- Total: ");  
+        it.printf(680, 155, id(myFonts), "%.1fGB", id(zfs_disk_total).state);
+        it.printf(595, 180, id(myFonts), "- %%: ");  
+        it.printf(680, 180, id(myFonts), "%.1f%%", id(zfs_disk_perc).state); 
+        it.rectangle(590, 220, 185, 110); // LOCAL 
+        it.rectangle(590, 220, 185, 25); //header box for Local
+        it.printf(595, 221, id(myFonts), "Local");
+        it.printf(595, 250, id(myFonts), "- Used: ");  
+        it.printf(680, 250, id(myFonts), "%.1fGB", id(local_disk_used).state); 
+        it.printf(595, 275, id(myFonts), "- Total: ");  
+        it.printf(680, 275, id(myFonts), "%.1fGB", id(local_disk_total).state);
+        it.printf(595, 300, id(myFonts), "- %%: ");  
+        it.printf(680, 300, id(myFonts), "%.1f%%", id(local_disk_perc).state); 
+        it.rectangle(590, 340, 185, 110); // local-lvm
+        it.rectangle(590, 340, 185, 25); //header box for Local LVM
+        it.printf(595, 341, id(myFonts), "Local-LVM");
+        it.printf(595, 370, id(myFonts), "- Used: ");  
+        it.printf(680, 370, id(myFonts), "%.1fGB", id(local_lvm_disk_used).state); 
+        it.printf(595, 395, id(myFonts), "- Total: ");  
+        it.printf(680, 395, id(myFonts), "%.1fGB", id(local_lvm_disk_total).state);
+        it.printf(595, 420, id(myFonts), "- %%: ");  
+        it.printf(680, 420, id(myFonts), "%.1f%%", id(local_lvm_disk_perc).state); 
+          
+      } else { 
+        // Page 0: Show the main dashboard
+        // === Time & Outside Temperature Box === 
+        it.rectangle(20, 20, 360, 140);
+        it.printf(40, 25, id(font_mdi_medium), "\U000F02DC"); 
+        it.printf(90, 30, id(myFont), "South Queensferry"); 
+        it.printf(40, 80, id(myFont), "Temperature:"); 
+        it.printf(240, 80, id(myFont), "%.1f°C", id(outside_temperature).state); 
+        it.printf(40, 110, id(myFont), "Wind Speed:"); 
+        it.printf(240, 110, id(myFont), "%.1f km/h", id(wind_speed).state); 
+
+        // === Temperature Box === 
+        it.rectangle(20, 180, 360, 280);
+        it.printf(40, 200, id(font_mdi_medium), "\U000F050F");
+        it.printf(90, 200, id(myFont), "Home Temperatures"); 
+
+        it.printf(40, 250, id(myFont), "Downstairs:"); 
+        it.printf(240, 250, id(myFont), "%.1f°C", id(temp_downstairs).state); 
+        it.printf(40, 280, id(myFont), "Upstairs:"); 
+        it.printf(240, 280, id(myFont), "%.1f°C", id(temp_upstairs).state); 
+        it.printf(40, 310, id(myFont), "Attic:"); 
+        it.printf(240, 310, id(myFont), "%.1f°C", id(temp_atic).state); 
+        it.printf(40, 340, id(myFont), "Garage:"); 
+        it.printf(240, 340, id(myFont), "%.1f°C", id(temp_garage).state); 
+        it.printf(40, 370, id(myFont), "Comms Room:"); 
+        it.printf(240, 370, id(myFont), "%.1f°C", id(temp_comms).state); 
+
+        // === Service Status Box === 
+        it.rectangle(400, 20, 360, 440); 
+        it.printf(420, 30, id(font_mdi_medium), "\U000F048D");
+        it.printf(470, 30, id(myFont), "Service Status"); 
+
+        int base_y = 90; 
+        int row_h = 40; 
+
+        auto draw_service = [&](int y, std::string name, std::string value) { 
+          std::string icon = (value == "up") ? "\U000F05E0" : "\U000F0159";
+          it.printf(420, y, id(myFont), "%s", name.c_str()); 
+          it.printf(690, y, id(font_mdi_medium), TextAlign::RIGHT, "%s", icon.c_str()); 
+        }; 
+
+        draw_service(base_y + 0 * row_h, "Plex", id(uptime_plex).state); 
+        draw_service(base_y + 1 * row_h, "HA Web UI",    id(uptime_web).state); 
+        draw_service(base_y + 2 * row_h, "Proxmox",      id(uptime_proxmox).state); 
+        draw_service(base_y + 3 * row_h, "qBittorrent",  id(uptime_qbittorrent).state); 
+        draw_service(base_y + 4 * row_h, "QNAP",         id(uptime_qnap).state); 
+        draw_service(base_y + 5 * row_h, "Semaphore",    id(uptime_semaphore).state); 
+        draw_service(base_y + 6 * row_h, "Portainer",    id(uptime_portainer).state); 
+        draw_service(base_y + 7 * row_h, "PiHole",       id(uptime_pihole).state); 
+        draw_service(base_y + 8 * row_h, "n8n", id(uptime_n8n).state); 
+      }
+      id(current_display_page) = !id(current_display_page);
