@@ -83,7 +83,7 @@ This dashboard reflects my setup—but you can adapt it:
 
 The ESPHome code driving this display is fairly manual and hardcoded. Every element—icons, positions, font sizes, sensor mapping—is placed by hand, which makes it tricky to update or expand. There’s no dynamic layout or auto-scaling, so small tweaks often require testing and adjusting coordinates little by little.
 
-It works for me as it is now, and I don't expect to need frequent changes. But it's definitely not plug-and-play, and there's room for improvement.
+It works for me as it is now, and I don't expect to need frequent changes. But it's definitely not plug-and-play, and there's plenty room for improvement.
 
 I’d like to eventually improve the layout logic or even explore a different approach entirely—perhaps switching to Arduino and making direct API calls to Home Assistant for more flexibility. For now, this solution fits my needs, and it stays reliable once configured. Just be prepared for some trial and error if you decide to build your own version.
 
