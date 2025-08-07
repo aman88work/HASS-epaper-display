@@ -2,6 +2,9 @@
 
 A simple, low-power dashboard using ESPHome and Home Assistant, displayed on a 7.5" e-paper device. It shows weather, temperatures, service status, and Proxmox container stats, cycling through splash, home, and Proxmox screens.
 
+![IMG_8023](https://github.com/user-attachments/assets/8d11993c-9ca8-453f-935b-2174f4e9778e)![IMG_8025](https://github.com/user-attachments/assets/ed1c2b3c-29d5-497b-98e4-d833ddbbaff3)
+
+
 ---
 
 ## Purpose
@@ -72,7 +75,7 @@ This dashboard reflects my setup—but you can adapt it:
 
 - Add different sensors (e.g., energy usage, security status)  
 - Re-order or combine slides  
-- Change icons, fonts, or layout elements
+- Change icons, fonts, or layout elements - I got all the icons using the MDI font, and used this [site](https://pictogrammers.com/library/mdi/) to browse through icons.
 
 ---
 
