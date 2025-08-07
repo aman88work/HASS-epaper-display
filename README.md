@@ -9,11 +9,17 @@ This project displays key smart home and server stats on a **7.5" e-paper screen
 
 ---
 
-## 🔧 Hardware
+## 🛠️ Hardware
 
-- **ESP32-C3 dev board**
-- **Waveshare 7.5" e-Paper (B/W)** – model `7.50inv2`
-- Powered via USB or 5V regulator
+Although the configuration is compatible with generic **ESP32-C3 + Waveshare 7.5" ePaper (B/W, model `7.50inv2`)**, this project uses the **Seeed Studio [XIAO 7.5" ePaper Panel](https://www.seeedstudio.com/XIAO-ePaper-7.5-inch-p-5747.html)** – a compact, all-in-one development kit that integrates:
+
+- **XIAO ESP32-C3**
+- **7.5" ePaper display**
+- Pre-wired SPI and power handling
+
+This makes it ideal for a neat, professional installation without custom wiring.
+
+> 🎨 **Note:** The panel is currently in its default white enclosure, but I plan to paint it **matte black** to better match the rest of my setup.
 
 ---
 
@@ -50,6 +56,6 @@ Make sure the following are available in Home Assistant:
 ## 🚀 Getting Started
 
 1. Clone this repo
-2. Flash `dashboard.yaml` to your ESP32-C3 board via ESPHome
-3. Update `wifi`, `api`, and any `sensor` or `text_sensor` entity IDs to match your HA setup
+2. Flash `dashboard.yaml` to your Seeed Studio **XIAO 7.5" ePaper Panel** using ESPHome
+3. Update `wifi`, `api`, and any `sensor` or `text_sensor` entity IDs to match your Home Assistant setup
 4. Mount and enjoy your ambient dashboard!
