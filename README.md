@@ -24,7 +24,7 @@ Provide key home and system data at a glance—without needing to unlock or tap 
 
 ## Hardware Overview
 
-The project uses the [Seeed Studio XIAO 7.5" ePaper Panel](https://wiki.seeedstudio.com/xiao_075inch_epaper_panel_esphome/), which includes:
+The project uses the [Seeed Studio XIAO 7.5" ePaper Panel](https://www.seeedstudio.com/XIAO-7-5-ePaper-Panel-p-6416.html?srsltid=AfmBOoo7yNJdh6ocDCPpBVsW7EUONfYskGAK5dhxONjg4-Wjx3BBmSTa), which includes:
 
 - Built-in **XIAO ESP32-C3**, Wi-Fi capable  
 - 7.5" 800×480 e-paper display  
@@ -62,7 +62,7 @@ Note: I plan to paint the panel matte black to blend with my setup.
 - **USB (initial setup)**: Click **Install → Manual Download**, then use the web uploader to flash the panel
 - **OTA (subsequent updates)**: After initial setup, updates can be pushed wirelessly if `ota:` and `api:` are properly configured
 
-For full ESPHome setup and examples, see the official Seeed wiki :contentReference[oaicite:2]{index=2}.
+For full ESPHome setup and examples, see the official [Seeed wiki](https://wiki.seeedstudio.com/xiao_075inch_epaper_panel_esphome/) .
 
 ---
 
