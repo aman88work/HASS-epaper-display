@@ -80,7 +80,11 @@ This dashboard reflects my setup—but you can adapt it:
 
 - `dashboard.yaml` – ESPHome configuration  
 - `fonts/` – Font files including Material Design icons  
-- `image/` – Boot splash image (optional)
+- `image/` – Boot splash image (optional), logos, etc 
+
+**REMINDER: For any images to be displayed nicely on a binary e-ink display, remember to reformat it as a binary image using a tool such as this one: https://onlinejpgtools.com/create-binary-jpg
+
+
 
 ---
 
