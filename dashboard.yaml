@@ -382,7 +382,7 @@ display:
       inverted: true 
     reset_pin: GPIO2 
     model: 7.50inv2 
-    update_interval: 30s 
+    update_interval: 1800s 
     lambda: |- 
       if (id(current_display_page) == 1) {
         // === Main Proxmox Resource Table ===
